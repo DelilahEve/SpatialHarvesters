@@ -18,6 +18,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -36,6 +37,8 @@ public class MobHarvesterTE extends SpatialHarvesterTE {
     protected String entity = null;
     protected PlayerEntity player = null;
     protected NbtCompound weapon = new NbtCompound();
+
+    private final int MIN_EMPTY_SLOTS = 3;
 
     public MobHarvesterTE(BlockEntityType<?> tileEntityTypeIn, BlockPos pos, BlockState state) {
         super(tileEntityTypeIn, pos, state);
@@ -96,6 +99,11 @@ public class MobHarvesterTE extends SpatialHarvesterTE {
             SpatialHarvesters.LOGGER.catching(error);
         }
         setOutputStacks(newOutputs);
+    }
+
+    @Override
+    protected boolean hasSpaceForOutput(Inventory inventory) {
+        return Tools.listEmptySlots(inventory).size() >= MIN_EMPTY_SLOTS;
     }
 
     protected MobEntity getMobEntity() {

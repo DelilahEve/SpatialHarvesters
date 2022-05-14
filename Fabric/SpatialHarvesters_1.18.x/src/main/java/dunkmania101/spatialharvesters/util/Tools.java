@@ -86,9 +86,9 @@ public class Tools {
      *
      * @return true if inventory has at least one empty slot
      */
-    public static boolean inventoryHasSpace(Inventory inventory) {
+    public static List<ItemStack> listEmptySlots(Inventory inventory) {
         // Inventory definitely has space if it's empty
-        if (inventory.isEmpty()) return true;
+        if (inventory.isEmpty()) return new ArrayList<>();
         // Get entire contents of the inventory
         List<ItemStack> inventoryStacks = new ArrayList<>();
         for (int i = 0; i < inventory.size(); i++) {
@@ -99,7 +99,7 @@ public class Tools {
          * Doing this is slightly more efficient than a for loop checking each slot
          * individually if the inventory is large (which modded inventories often are)
         */
-        return inventoryStacks.stream().anyMatch(ItemStack::isEmpty);
+        return inventoryStacks.stream().filter(ItemStack::isEmpty).toList();
     }
 
     public static VoxelShape getRotatedVoxelShape(VoxelShape shape, Direction from, Direction to) {

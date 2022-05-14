@@ -30,6 +30,8 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
     protected ArrayList<String> BLACKLIST = new ArrayList<>();
     public Block thisBlock = null;
 
+    private final int MIN_EMPTY_SLOTS = 1;
+
     public SpatialHarvesterTE(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
         super(blockEntityType, pos, state, true, true, true);
     }
@@ -67,9 +69,7 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
                         }
                     }
                     // Filter available inventories to those with at least one empty slot
-                    List<Inventory> inventoriesWithSpace = outInventories.stream()
-                            .filter(Tools::inventoryHasSpace)
-                            .toList();
+                    List<Inventory> inventoriesWithSpace = filterInventories(outInventories);
                     if (!spaceRippers.isEmpty() && !inventoriesWithSpace.isEmpty()) {
                         lastMinuteActions();
                         if (!this.OUTPUTS.isEmpty()) {
@@ -116,6 +116,26 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
     }
 
     protected void lastMinuteActions() {
+    }
+
+    /**
+     * Filter inventories to those with enough item space for output
+     */
+    private List<Inventory> filterInventories(List<Inventory> connectedInventories) {
+        return connectedInventories.stream()
+                .filter(this::hasSpaceForOutput)
+                .toList();
+    }
+
+    /**
+     * Override in children to control output minimums
+     *
+     * @param inventory Inventory to check capacity of
+     *
+     * @return true if inventory has enough slots for the output
+     */
+    protected boolean hasSpaceForOutput(Inventory inventory) {
+        return Tools.listEmptySlots(inventory).size() >= MIN_EMPTY_SLOTS;
     }
 
     public void setOutputs(ArrayList<Item> OUTPUTS) {
