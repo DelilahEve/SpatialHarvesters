@@ -103,7 +103,7 @@ public class MobHarvesterTE extends SpatialHarvesterTE {
 
     @Override
     protected boolean hasSpaceForOutput(Inventory inventory) {
-        return Tools.listEmptySlots(inventory).size() >= MIN_EMPTY_SLOTS;
+        return Tools.countEmptySlots(inventory) >= MIN_EMPTY_SLOTS;
     }
 
     protected MobEntity getMobEntity() {

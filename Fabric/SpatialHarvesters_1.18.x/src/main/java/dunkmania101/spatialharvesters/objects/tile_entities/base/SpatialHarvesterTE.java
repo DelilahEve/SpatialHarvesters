@@ -135,7 +135,7 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
      * @return true if inventory has enough slots for the output
      */
     protected boolean hasSpaceForOutput(Inventory inventory) {
-        return Tools.listEmptySlots(inventory).size() >= MIN_EMPTY_SLOTS;
+        return Tools.countEmptySlots(inventory) >= MIN_EMPTY_SLOTS;
     }
 
     public void setOutputs(ArrayList<Item> OUTPUTS) {
