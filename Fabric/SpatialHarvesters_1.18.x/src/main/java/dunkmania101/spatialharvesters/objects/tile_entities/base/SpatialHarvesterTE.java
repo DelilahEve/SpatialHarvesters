@@ -1,19 +1,14 @@
 package dunkmania101.spatialharvesters.objects.tile_entities.base;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import dunkmania101.spatialharvesters.data.CommonConfig;
 import dunkmania101.spatialharvesters.data.CustomValues;
 import dunkmania101.spatialharvesters.init.ItemInit;
 import dunkmania101.spatialharvesters.objects.blocks.SpaceRipperBlock;
-import dunkmania101.spatialharvesters.objects.tile_entities.BioHarvesterTE;
-import dunkmania101.spatialharvesters.objects.tile_entities.DarkMobHarvesterTE;
 import dunkmania101.spatialharvesters.objects.tile_entities.MobHarvesterTE;
-import dunkmania101.spatialharvesters.objects.tile_entities.OreHarvesterTE;
-import dunkmania101.spatialharvesters.objects.tile_entities.SoilHarvesterTE;
-import dunkmania101.spatialharvesters.objects.tile_entities.SpecificMobHarvesterTE;
-import dunkmania101.spatialharvesters.objects.tile_entities.StoneHarvesterTE;
 import dunkmania101.spatialharvesters.util.Tools;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -71,7 +66,11 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
                             }
                         }
                     }
-                    if (!spaceRippers.isEmpty() && !outInventories.isEmpty()) {
+                    // Filter available inventories to those with at least one empty slot
+                    List<Inventory> inventoriesWithSpace = outInventories.stream()
+                            .filter(Tools::inventoryHasSpace)
+                            .toList();
+                    if (!spaceRippers.isEmpty() && !inventoriesWithSpace.isEmpty()) {
                         lastMinuteActions();
                         if (!this.OUTPUTS.isEmpty()) {
                             filterOutputsMinTier(this.thisBlock);
@@ -95,8 +94,8 @@ public class SpatialHarvesterTE extends TickingRedstoneEnergyMachineTE {
                                             setActive(true);
                                         } else {
                                             int originalCount = chosenOutput.getCount();
-                                            Inventory inventory = outInventories
-                                                    .get(rand.nextInt(outInventories.size()));
+                                            Inventory inventory = inventoriesWithSpace
+                                                    .get(rand.nextInt(inventoriesWithSpace.size()));
                                             ItemStack resultStack = Tools.insertItemStacked(inventory, chosenOutput);
                                             if (resultStack.getCount() != originalCount) {
                                                 extract(price);
